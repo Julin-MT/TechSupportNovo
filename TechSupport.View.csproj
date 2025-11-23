@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6062E581-78EE-49C7-B0A7-7FE7D5B6BA2F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>TechSupportApp</RootNamespace>
+    <AssemblyName>TechSupportApp</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CadastroClienteForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroClienteForm.Designer.cs">
+      <DependentUpon>CadastroClienteForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditarChamado.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditarChamado.Designer.cs">
+      <DependentUpon>frmEditarChamado.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmNovoChamado.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNovoChamado.Designer.cs">
+      <DependentUpon>frmNovoChamado.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TeladeLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TeladeLogin.Designer.cs">
+      <DependentUpon>TeladeLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginForm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="frmDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDashboard.Designer.cs">
+      <DependentUpon>frmDashboard.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="CadastroClienteForm.resx">
+      <DependentUpon>CadastroClienteForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditarChamado.resx">
+      <DependentUpon>frmEditarChamado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmNovoChamado.resx">
+      <DependentUpon>frmNovoChamado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TeladeLogin.resx">
+      <DependentUpon>TeladeLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="frmDashboard.resx">
+      <DependentUpon>frmDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TechSupport.Entidades\TechSupport.Entidades.csproj">
+      <Project>{8dbf0ed5-9cfc-4c38-9ccc-e2fdefefc0b0}</Project>
+      <Name>TechSupport.Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TechSupport.Model\TechSupport.Model.csproj">
+      <Project>{05cac0ab-97f1-475b-9f01-1791bd838b1f}</Project>
+      <Name>TechSupport.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\do-utilizador.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bloqueado.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icka4uoo98m4ptfybikiu-6532622b_K7b5aS77sX.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LOGAN do sistema.jpeg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
