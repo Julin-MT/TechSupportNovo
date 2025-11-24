@@ -7,33 +7,95 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TechSupport.Entidades; 
+using TechSupportApp.DAO;       
 
 namespace TechSupportApp
 {
     public partial class frmDashboard : Form
     {
-        // --- INICIO DA CORREÇÃO ---
-        // Este é o Construtor. Sem ele, a tela fica branca!
         public frmDashboard()
         {
-            InitializeComponent(); // Esse comando "desenha" a tela
+            InitializeComponent();
         }
-        // --- FIM DA CORREÇÃO ---
+
+        
+        private async void frmDashboard_Load(object sender, EventArgs e)
+        {
+            await CarregarGrid();
+        }
+
+        
+        private async Task CarregarGrid()
+        {
+            try
+            {
+                
+                TicketDAO dao = new TicketDAO();
+
+                
+                List<Ticket> listaTotal = await dao.ListarTickets();
+
+                
+                var listaFiltrada = listaTotal.FindAll(x => x.Status == "Aberto");
+
+                
+                dataGridView1.DataSource = listaFiltrada;
+
+                
+                ConfigurarColunas();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Não foi possível carregar os chamados: " + ex.Message, "Erro de Conexão");
+            }
+        }
+
+        
+        private void ConfigurarColunas()
+        {
+            
+            if (dataGridView1.Rows.Count > 0)
+            {
+                // Esconde colunas técnicas ou desnecessárias nessa visão rápida
+                // IMPORTANTE: Os nomes dentro de [""] devem ser iguais ao da classe Ticket.cs
+                if (dataGridView1.Columns["Prioridade"] != null) dataGridView1.Columns["Prioridade"].Visible = false;
+                if (dataGridView1.Columns["UsuarioId"] != null) dataGridView1.Columns["UsuarioId"].Visible = false;
+                if (dataGridView1.Columns["NomeUsuario"] != null) dataGridView1.Columns["NomeUsuario"].Visible = false;
+                if (dataGridView1.Columns["EmailUsuario"] != null) dataGridView1.Columns["EmailUsuario"].Visible = false;
+                if (dataGridView1.Columns["DataCriacao"] != null) dataGridView1.Columns["DataCriacao"].Visible = false;
+                if (dataGridView1.Columns["DataFechamento"] != null) dataGridView1.Columns["DataFechamento"].Visible = false;
+                if (dataGridView1.Columns["Categoria"] != null) dataGridView1.Columns["Categoria"].Visible = false;
+                if (dataGridView1.Columns["Observacoes"] != null) dataGridView1.Columns["Observacoes"].Visible = false;
+
+                // Renomeia os cabeçalhos para ficar bonito
+                if (dataGridView1.Columns["Id"] != null) dataGridView1.Columns["Id"].HeaderText = "Cód.";
+                if (dataGridView1.Columns["Titulo"] != null) dataGridView1.Columns["Titulo"].HeaderText = "Título do Chamado";
+                if (dataGridView1.Columns["Descricao"] != null) dataGridView1.Columns["Descricao"].HeaderText = "Descrição";
+                if (dataGridView1.Columns["Status"] != null) dataGridView1.Columns["Status"].HeaderText = "Situação";
+
+                // Ajusta a largura para preencher a tela cinza
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+        }
+
+        // --- Seus Botões Antigos (Mantidos) ---
 
         private void btnNovo_Click(object sender, EventArgs e)
         {
-            // Pode deixar vazio ou apagar se não usar
+            // Botão vazio (pode apagar se não usar)
         }
 
         private void btnNovoChamado_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1. Cria uma nova instância da tela de Abertura de Chamado
                 frmNovoChamado telaNovoChamado = new frmNovoChamado();
-
-                // 2. Exibe a tela. 
                 telaNovoChamado.ShowDialog();
+
+                // DICA EXTRA: Depois de fechar a tela de novo chamado, 
+                // é bom recarregar o grid para o novo chamado aparecer:
+                // CarregarGrid(); <--- (Pode descomentar isso depois se quiser testar)
             }
             catch (Exception ex)
             {
@@ -41,20 +103,11 @@ namespace TechSupportApp
             }
         }
 
-        private void frmDashboard_Load(object sender, EventArgs e)
-        {
-            // Se precisar carregar dados ao abrir, coloque aqui
-        }
-
-        private void btnEditarChamado_Click(object sender, EventArgs e) // O nome pode variar dependendo do seu botão
+        private void btnEditarChamado_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1. Cria a instancia da tela de Edição
                 frmEditarChamado telaEditar = new frmEditarChamado();
-
-                // 2. Abre a tela. 
-                // Usamos ShowDialog() para impedir que o usuário mexa no Dashboard enquanto edita
                 telaEditar.ShowDialog();
             }
             catch (Exception ex)
