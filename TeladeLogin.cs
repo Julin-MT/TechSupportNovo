@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TechSupport.DAO;
 using TechSupport.Entidades;
 using TechSupport.Model;
 
@@ -34,46 +35,68 @@ namespace TechSupportApp
 
         }
 
-        private void btnEntrar_Click(object sender, EventArgs e)
+        private async void btnEntrar_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1. Pega os dados da tela diretamente como strings
-                string email = txtEmail.Text;
-                string senha = txtSenha.Text;
+                // Limpa espaços em branco antes e depois
+                string email = txtEmail.Text.Trim();
+                string senha = txtSenha.Text.Trim();
 
-                // Validação básica para não chamar o banco à toa
+                // 1. Validação simples
                 if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
                 {
-                    MessageBox.Show("Por favor, preencha o email e a senha.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Por favor, preencha email e senha.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // 2. Chama a camada de modelo com o novo método
-                UsuarioModel model = new UsuarioModel();
-                bool loginOk = model.VerificarLogin(email, senha); // <<-- ESTA É A LINHA QUE MUDOU
+                // Bloqueia o botão para evitar cliques duplos
+                btnEntrar.Enabled = false;
+                btnEntrar.Text = "Verificando...";
 
-                if (loginOk)
+                // 2. Chama a API
+                UsuarioDAO dao = new UsuarioDAO();
+                UsuarioEntidade usuarioEncontrado = await dao.FazerLogin(email, senha);
+
+                // Reabilita o botão
+                btnEntrar.Enabled = true;
+                btnEntrar.Text = "Entrar";
+
+                // 3. Verifica se o usuário existe e se a senha bate
+                // (Usamos StringComparison para ignorar maiúsculas/minúsculas na senha, para evitar erro bobo na apresentação)
+                if (usuarioEncontrado != null &&
+                    usuarioEncontrado.SenhaHash != null &&
+                    usuarioEncontrado.SenhaHash.Trim().Equals(senha, StringComparison.OrdinalIgnoreCase))
                 {
-                    // Mudei de 'frmDashboard' para 'TelaPrincipal' (baseado na sua foto)
-                    frmDashboard tela = new frmDashboard();
-                    tela.Show();
+                    // === LOGIN SUCESSO ===
+
+                    // Preenche o Crachá (Sessão Global)
+                    TechSupport.Entidades.Sessao.UsuarioId = usuarioEncontrado.Id;
+                    TechSupport.Entidades.Sessao.NomeUsuario = usuarioEncontrado.Nome;
+
+                    // Abre o Dashboard
+                    frmDashboard dashboard = new frmDashboard();
+                    dashboard.Show();
+
+                    // Esconde a tela de Login
                     this.Hide();
                 }
                 else
                 {
-                    // SE O LOGIN ESTIVER INCORRETO, MOSTRA FALHA
-                    MessageBox.Show("Email ou senha incorretos. Tente novamente.", "Falha no Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Se chegou aqui, ou o email não existe ou a senha está errada
+                    MessageBox.Show("Email ou senha incorretos.", "Erro de Acesso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                // SE OCORRER UM ERRO DE CONEXÃO OU OUTRO PROBLEMA
-                MessageBox.Show("Ocorreu um erro inesperado: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                btnEntrar.Enabled = true;
+                btnEntrar.Text = "Entrar";
+                MessageBox.Show("Erro de conexão: " + ex.Message, "Erro Técnico");
             }
         }
-        
-            private void pictureBox2_Click(object sender, EventArgs e)
+
+
+        private void pictureBox2_Click(object sender, EventArgs e)
         {
 
         }

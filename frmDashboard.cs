@@ -7,8 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TechSupport.Entidades; 
-using TechSupportApp.DAO;       
+using TechSupport.DAO;
+using TechSupport.Entidades;
+using TechSupportApp.DAO;
+
 
 namespace TechSupportApp
 {

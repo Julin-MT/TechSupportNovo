@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TechSupport.DAO;
 using TechSupport.Entidades;
 using TechSupport.Model;
 
@@ -24,41 +25,58 @@ namespace TechSupportApp
 
         }
 
-        private void btnCadastrar_Click(object sender, EventArgs e)
+        private async void btnCadastrar_Click(object sender, EventArgs e)
         {
             // 1. Pegar os dados que o usuário digitou na tela
             string nome = txtNome.Text;
             string email = txtEmail.Text;
             string senha = txtSenha.Text;
 
-            // 2. Validação simples (verificar se os campos não estão vazios)
+            // 2. Validação simples
             if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
             {
                 MessageBox.Show("Por favor, preencha todos os campos.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return; // Para a execução aqui se algo estiver faltando
+                return;
             }
 
-            // 3. Criar uma entidade de usuário com os dados da tela
+            // 3. Criar uma entidade de usuário
             UsuarioEntidade novoUsuario = new UsuarioEntidade();
-            novoUsuario.Nome = nome; // Supondo que sua entidade tenha a propriedade 'Name'
-            novoUsuario.Email = email; // Supondo que sua entidade tenha a propriedade 'Email'
-                                       // NÃO SALVAMOS A SENHA DIRETO AQUI!
+            novoUsuario.Nome = nome;
+            novoUsuario.Email = email;
+            // Não precisamos setar a SenhaHash aqui, passamos a senha pura pro DAO enviar
 
-            // 4. Chamar a camada de Lógica (Model) para fazer o cadastro
+            // 4. Chamar o DAO para enviar para a API
             try
             {
-                UsuarioModel usuarioModel = new UsuarioModel();
-                // A camada Model que deve se preocupar em criptografar a senha e chamar o DAO
-                usuarioModel.CadastrarNovoUsuario(novoUsuario, senha);
+                // Bloqueia o botão para não clicar duas vezes sem querer
+                btnCadastrar.Enabled = false;
 
-                MessageBox.Show("Cliente cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close(); // Fecha a tela de cadastro após o sucesso
+                UsuarioDAO dao = new UsuarioDAO();
+
+                // --- AQUI A MÁGICA ACONTECE ---
+                // Usamos 'await' para esperar a API cadastrar
+                bool sucesso = await dao.CadastrarUsuario(novoUsuario, senha);
+
+                if (sucesso)
+                {
+                    MessageBox.Show("Cliente cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close(); // Fecha a tela
+                }
+                else
+                {
+                    MessageBox.Show("Erro ao cadastrar. Verifique se o email já existe.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                // Se der algum erro (ex: email já existe), o Model vai avisar
-                MessageBox.Show("Erro ao cadastrar cliente: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erro técnico ao cadastrar: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Reabilita o botão independente se deu certo ou errado
+                btnCadastrar.Enabled = true;
             }
         }
     }
-}
+    }
+

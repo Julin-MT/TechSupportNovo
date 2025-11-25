@@ -121,6 +121,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TechSupport.DAO\TechSupport.DAO.csproj">
+      <Project>{88039D06-1BB1-4665-BE5F-77F42A0162A1}</Project>
+      <Name>TechSupport.DAO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TechSupport.Entidades\TechSupport.Entidades.csproj">
       <Project>{8dbf0ed5-9cfc-4c38-9ccc-e2fdefefc0b0}</Project>
       <Name>TechSupport.Entidades</Name>
