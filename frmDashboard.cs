@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TechSupport.DAO;
 using TechSupport.Entidades;
-using TechSupportApp.DAO;
+
 
 
 namespace TechSupportApp
