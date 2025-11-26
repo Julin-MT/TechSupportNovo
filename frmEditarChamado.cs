@@ -77,7 +77,7 @@ namespace TechSupportApp
                 ticketAtual.Id = int.Parse(textBox1.Text);
 
                 // Pegamos o que o técnico escreveu nas caixas editáveis
-                ticketAtual.Status = textBox5.Text;      // Status
+                ticketAtual.Status = "Concluído";      // Status
                 ticketAtual.Categoria = textBox7.Text;   // Categoria
                 ticketAtual.Observacoes = textBox8.Text; // Observações
 
