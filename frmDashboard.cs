@@ -92,41 +92,61 @@ namespace TechSupportApp
         {
             if (dataGridView1.Rows.Count > 0)
             {
-                // --- 1. COLUNAS QUE QUEREMOS ESCONDER ---
-                if (dataGridView1.Columns["UsuarioId"] != null) dataGridView1.Columns["UsuarioId"].Visible = false;
-                if (dataGridView1.Columns["NomeUsuario"] != null) dataGridView1.Columns["NomeUsuario"].Visible = false;
-                if (dataGridView1.Columns["EmailUsuario"] != null) dataGridView1.Columns["EmailUsuario"].Visible = false;
+                // 1. Garante que a barra de rolagem apareça
+                dataGridView1.ScrollBars = ScrollBars.Both;
 
-                // (Apaguei Categoria e Observacoes daqui porque agora queremos ver!)
+                // 2. Desliga o ajuste automático que "espreme" as colunas
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-                // --- 2. COLUNAS QUE QUEREMOS VER ---
+                // 3. Tira a quebra de linha (deixa as linhas finas e uniformes)
+                dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
 
-                // Categoria (Novo)
-                if (dataGridView1.Columns["Categoria"] != null)
+
+                // --- CONFIGURAÇÃO DAS COLUNAS ---
+
+                // ID (Pequeno)
+                if (dataGridView1.Columns["Id"] != null)
                 {
-                    dataGridView1.Columns["Categoria"].Visible = true;
-                    dataGridView1.Columns["Categoria"].HeaderText = "Categoria";
+                    dataGridView1.Columns["Id"].HeaderText = "Cód.";
+                    dataGridView1.Columns["Id"].Width = 60;
                 }
 
-                // Observações / Solução (Novo)
-                if (dataGridView1.Columns["Observacoes"] != null)
+                // Título (Médio)
+                if (dataGridView1.Columns["Titulo"] != null)
                 {
-                    dataGridView1.Columns["Observacoes"].Visible = true;
-                    dataGridView1.Columns["Observacoes"].HeaderText = "Solução / Obs";
+                    dataGridView1.Columns["Titulo"].HeaderText = "Título";
+                    dataGridView1.Columns["Titulo"].Width = 200;
                 }
 
-                // Prioridade
+                // Descrição (Grande - Onde precisa de espaço!)
+                if (dataGridView1.Columns["Descricao"] != null)
+                {
+                    dataGridView1.Columns["Descricao"].HeaderText = "Descrição";
+                    dataGridView1.Columns["Descricao"].Width = 300; // Bem largo para ler bem
+                }
+
+                // Status (Médio)
+                if (dataGridView1.Columns["Status"] != null)
+                {
+                    dataGridView1.Columns["Status"].HeaderText = "Situação";
+                    dataGridView1.Columns["Status"].Width = 100;
+                }
+
+                // Prioridade (Médio)
                 if (dataGridView1.Columns["Prioridade"] != null)
                 {
                     dataGridView1.Columns["Prioridade"].Visible = true;
-                    dataGridView1.Columns["Prioridade"].HeaderText = "Prioridade";
+                    dataGridView1.Columns["Prioridade"].Width = 100;
+                    dataGridView1.Columns["Prioridade"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 }
 
-                // Datas
+                // Datas (Médias)
                 if (dataGridView1.Columns["DataCriacao"] != null)
                 {
                     dataGridView1.Columns["DataCriacao"].Visible = true;
                     dataGridView1.Columns["DataCriacao"].HeaderText = "Aberto em";
+                    dataGridView1.Columns["DataCriacao"].Width = 120;
                     dataGridView1.Columns["DataCriacao"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 }
 
@@ -134,24 +154,32 @@ namespace TechSupportApp
                 {
                     dataGridView1.Columns["DataFechamento"].Visible = true;
                     dataGridView1.Columns["DataFechamento"].HeaderText = "Fechado em";
+                    dataGridView1.Columns["DataFechamento"].Width = 120;
                     dataGridView1.Columns["DataFechamento"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 }
 
-                // Colunas Padrão
-                if (dataGridView1.Columns["Id"] != null)
+                // Categoria (Médio)
+                if (dataGridView1.Columns["Categoria"] != null)
                 {
-                    dataGridView1.Columns["Id"].HeaderText = "Cód.";
-                    dataGridView1.Columns["Id"].Width = 50;
+                    dataGridView1.Columns["Categoria"].Visible = true;
+                    dataGridView1.Columns["Categoria"].HeaderText = "Categoria";
+                    dataGridView1.Columns["Categoria"].Width = 150;
                 }
-                if (dataGridView1.Columns["Titulo"] != null) dataGridView1.Columns["Titulo"].HeaderText = "Título";
-                if (dataGridView1.Columns["Descricao"] != null) dataGridView1.Columns["Descricao"].HeaderText = "Descrição";
-                if (dataGridView1.Columns["Status"] != null) dataGridView1.Columns["Status"].HeaderText = "Situação";
 
-                // Ajuste Final
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                // Observações (Grande)
+                if (dataGridView1.Columns["Observacoes"] != null)
+                {
+                    dataGridView1.Columns["Observacoes"].Visible = true;
+                    dataGridView1.Columns["Observacoes"].HeaderText = "Solução / Obs";
+                    dataGridView1.Columns["Observacoes"].Width = 300; // Bem largo
+                }
+
+                // --- ESCONDER O RESTO ---
+                if (dataGridView1.Columns["UsuarioId"] != null) dataGridView1.Columns["UsuarioId"].Visible = false;
+                if (dataGridView1.Columns["NomeUsuario"] != null) dataGridView1.Columns["NomeUsuario"].Visible = false;
+                if (dataGridView1.Columns["EmailUsuario"] != null) dataGridView1.Columns["EmailUsuario"].Visible = false;
             }
         }
-
         // --- Seus Botões Antigos (Mantidos) ---
 
         private void btnNovo_Click(object sender, EventArgs e)
@@ -202,6 +230,17 @@ namespace TechSupportApp
         private void tabPageConcluidosToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Verifica se clicou numa linha válida (e não no cabeçalho)
+            if (e.RowIndex >= 0)
+            {
+                // Simula o clique no botão "Editar"
+                // Isso vai abrir a tela cheia com todos os detalhes para leitura!
+                btnEditarChamado_Click(sender, e);
+            }
         }
     }
 }
