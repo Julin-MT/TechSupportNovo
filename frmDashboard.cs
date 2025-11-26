@@ -12,6 +12,7 @@ using TechSupport.Entidades;
 
 
 
+
 namespace TechSupportApp
 {
     public partial class frmDashboard : Form
@@ -27,29 +28,62 @@ namespace TechSupportApp
             await CarregarGrid();
         }
 
-        
+
         private async Task CarregarGrid()
         {
             try
             {
-                
                 TicketDAO dao = new TicketDAO();
 
-                
+                // 1. Busca TUDO da API
                 List<Ticket> listaTotal = await dao.ListarTickets();
 
-                
-                var listaFiltrada = listaTotal.FindAll(x => x.Status == "Aberto");
+                // 2. A MUDANÇA ESTÁ AQUI (Ordenação)
+                // A lógica: Quem for "Concluído" vai para o final da fila (True fica depois de False)
+                // E dentro de cada grupo, ordenamos pelo ID (do mais novo para o mais velho)
+                var listaOrdenada = listaTotal
+                    .OrderBy(x => x.Status == "Concluído")
+                    .ThenByDescending(x => x.Id)
+                    .ToList();
 
-                
-                dataGridView1.DataSource = listaFiltrada;
+                // 3. Joga no Grid
+                dataGridView1.DataSource = null; // Limpa para evitar bugs visuais
+                dataGridView1.DataSource = listaOrdenada;
 
-                
+                // 4. Configura as colunas (Largura, Títulos, Datas)
                 ConfigurarColunas();
+
+                // 5. Pinta as linhas de cinza (Visual Profissional)
+                PintarLinhas();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Não foi possível carregar os chamados: " + ex.Message, "Erro de Conexão");
+            }
+        }
+
+        // --- COPIE E COLE ESSE MÉTODO NOVO NO SEU CÓDIGO ---
+        private void PintarLinhas()
+        {
+            // Percorre cada linha do grid para ver o status
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                // Pega o ticket que está nessa linha
+                Ticket ticket = (Ticket)row.DataBoundItem;
+
+                if (ticket != null && ticket.Status == "Concluído")
+                {
+                    // Se estiver concluído, pinta de cinza claro e letra cinza escuro
+                    row.DefaultCellStyle.BackColor = System.Drawing.Color.LightGray;
+                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.DimGray;
+                    row.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Gray;
+                }
+                else
+                {
+                    // Se estiver aberto, mantém branco com letra preta
+                    row.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+                }
             }
         }
 
@@ -58,23 +92,37 @@ namespace TechSupportApp
         {
             if (dataGridView1.Rows.Count > 0)
             {
-                // --- COLUNAS QUE QUEREMOS ESCONDER ---
+                // --- 1. COLUNAS QUE QUEREMOS ESCONDER ---
                 if (dataGridView1.Columns["UsuarioId"] != null) dataGridView1.Columns["UsuarioId"].Visible = false;
                 if (dataGridView1.Columns["NomeUsuario"] != null) dataGridView1.Columns["NomeUsuario"].Visible = false;
                 if (dataGridView1.Columns["EmailUsuario"] != null) dataGridView1.Columns["EmailUsuario"].Visible = false;
-                if (dataGridView1.Columns["Categoria"] != null) dataGridView1.Columns["Categoria"].Visible = false;
-                if (dataGridView1.Columns["Observacoes"] != null) dataGridView1.Columns["Observacoes"].Visible = false;
 
-                // --- COLUNAS VISÍVEIS (AGORA COM PRIORIDADE) ---
+                // (Apaguei Categoria e Observacoes daqui porque agora queremos ver!)
 
-                // 1. Prioridade (Mudei para TRUE)
+                // --- 2. COLUNAS QUE QUEREMOS VER ---
+
+                // Categoria (Novo)
+                if (dataGridView1.Columns["Categoria"] != null)
+                {
+                    dataGridView1.Columns["Categoria"].Visible = true;
+                    dataGridView1.Columns["Categoria"].HeaderText = "Categoria";
+                }
+
+                // Observações / Solução (Novo)
+                if (dataGridView1.Columns["Observacoes"] != null)
+                {
+                    dataGridView1.Columns["Observacoes"].Visible = true;
+                    dataGridView1.Columns["Observacoes"].HeaderText = "Solução / Obs";
+                }
+
+                // Prioridade
                 if (dataGridView1.Columns["Prioridade"] != null)
                 {
-                    dataGridView1.Columns["Prioridade"].Visible = true; // <--- AGORA APARECE
+                    dataGridView1.Columns["Prioridade"].Visible = true;
                     dataGridView1.Columns["Prioridade"].HeaderText = "Prioridade";
                 }
 
-                // 2. Datas (Já tínhamos arrumado)
+                // Datas
                 if (dataGridView1.Columns["DataCriacao"] != null)
                 {
                     dataGridView1.Columns["DataCriacao"].Visible = true;
@@ -89,7 +137,7 @@ namespace TechSupportApp
                     dataGridView1.Columns["DataFechamento"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
                 }
 
-                // 3. Colunas Padrão
+                // Colunas Padrão
                 if (dataGridView1.Columns["Id"] != null)
                 {
                     dataGridView1.Columns["Id"].HeaderText = "Cód.";
@@ -99,6 +147,7 @@ namespace TechSupportApp
                 if (dataGridView1.Columns["Descricao"] != null) dataGridView1.Columns["Descricao"].HeaderText = "Descrição";
                 if (dataGridView1.Columns["Status"] != null) dataGridView1.Columns["Status"].HeaderText = "Situação";
 
+                // Ajuste Final
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
         }
@@ -148,6 +197,11 @@ namespace TechSupportApp
             {
                 MessageBox.Show("Erro ao abrir tela de edição: " + ex.Message);
             }
+        }
+
+        private void tabPageConcluidosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
