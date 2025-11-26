@@ -232,14 +232,69 @@ namespace TechSupportApp
 
         }
 
-        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private async void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Verifica se clicou numa linha válida (e não no cabeçalho)
+            // Verifica se clicou numa linha válida
             if (e.RowIndex >= 0)
             {
-                // Simula o clique no botão "Editar"
-                // Isso vai abrir a tela cheia com todos os detalhes para leitura!
-                btnEditarChamado_Click(sender, e);
+                // 1. Pega os dados da linha clicada
+                Ticket ticketSelecionado = (Ticket)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+
+                // 2. Abre a tela JÁ PASSANDO o ticket (usa o código novo que fizemos acima)
+                frmEditarChamado telaEdicao = new frmEditarChamado(ticketSelecionado);
+
+                // 3. Mostra a tela
+                telaEdicao.ShowDialog();
+
+                // 4. Quando fechar, atualiza o grid para ver se mudou algo
+                await CarregarGrid();
+            }
+        }
+
+        private async void btnExcluir_Click(object sender, EventArgs e)
+        {
+            // Verifica se tem alguém selecionado na lista
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                // Pergunta de segurança (Obrigatório em TCC!)
+                var confirmacao = MessageBox.Show(
+                    "Tem certeza que deseja excluir este chamado permanentemente?",
+                    "Confirmação",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (confirmacao == DialogResult.Yes)
+                {
+                    try
+                    {
+                        // 1. Pega o ID da linha selecionada
+                        Ticket ticketSelecionado = (Ticket)dataGridView1.SelectedRows[0].DataBoundItem;
+
+                        // 2. Chama o DAO para excluir
+                        TicketDAO dao = new TicketDAO();
+                        bool sucesso = await dao.ExcluirTicket(ticketSelecionado.Id);
+
+                        if (sucesso)
+                        {
+                            MessageBox.Show("Chamado excluído com sucesso!");
+                            // 3. Atualiza a lista para ele sumir
+                            await CarregarGrid();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Erro ao excluir. Tente novamente.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Erro técnico: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecione um chamado na lista para excluir.");
             }
         }
     }

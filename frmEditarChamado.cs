@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using TechSupport.DAO;
 using TechSupport.Entidades;
 
-    
 
 namespace TechSupportApp
 {
@@ -12,15 +11,40 @@ namespace TechSupportApp
         // Guarda o chamado que estamos mexendo
         private Ticket ticketAtual = null;
 
+        // CONSTRUTOR 1: Abre vazio (para usar a lupa)
         public frmEditarChamado()
         {
             InitializeComponent();
         }
 
+        // --- CONSTRUTOR 2: Abre já preenchido (para o duplo clique do Dashboard) ---
+        public frmEditarChamado(Ticket ticketRecebido)
+        {
+            InitializeComponent();
+            PreencherTela(ticketRecebido);
+        }
+
+        // Método auxiliar para não repetir código
+        private void PreencherTela(Ticket ticket)
+        {
+            ticketAtual = ticket;
+
+            if (ticketAtual != null)
+            {
+                textBox1.Text = ticketAtual.Id.ToString();          // ID
+                textBox2.Text = ticketAtual.DataCriacao.ToString(); // Aberto em
+                textBox3.Text = ticketAtual.Titulo;                 // Titulo
+                textBox4.Text = ticketAtual.Descricao;              // Descrição
+                textBox5.Text = ticketAtual.Status;                 // Status
+                textBox6.Text = ticketAtual.Prioridade;             // Prioridade
+                textBox7.Text = ticketAtual.Categoria;              // Categoria
+                textBox8.Text = ticketAtual.Observacoes;            // Observações
+            }
+        }
+
         // --- BOTÃO BUSCAR (btnBuscar) ---
         private async void btnBuscar_Click(object sender, EventArgs e)
         {
-            // ASSUMI QUE O CAMPO ID É O textBox1. Se não for, mude aqui!
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 MessageBox.Show("Digite o ID do chamado.");
@@ -33,21 +57,11 @@ namespace TechSupportApp
                 TicketDAO dao = new TicketDAO();
 
                 // Busca no banco
-                ticketAtual = await dao.BuscarPorId(id);
+                Ticket ticketEncontrado = await dao.BuscarPorId(id);
 
-                if (ticketAtual != null)
+                if (ticketEncontrado != null)
                 {
-                    // --- PREENCHENDO OS CAMPOS EXATOS DA SUA LISTA ---
-
-                    textBox2.Text = ticketAtual.DataCriacao.ToString(); // Aberto em
-                    textBox3.Text = ticketAtual.Titulo;                 // Titulo
-                    textBox4.Text = ticketAtual.Descricao;              // Descrição
-
-                    // Campos Editáveis
-                    textBox5.Text = ticketAtual.Status;     // Status
-                    textBox6.Text = ticketAtual.Prioridade; // Prioridade
-                    textBox7.Text = ticketAtual.Categoria;  // Categoria
-                    textBox8.Text = ticketAtual.Observacoes;// Observações
+                    PreencherTela(ticketEncontrado);
                 }
                 else
                 {
@@ -71,13 +85,11 @@ namespace TechSupportApp
 
             try
             {
-                // --- AQUI A SOLUÇÃO DE EMERGÊNCIA ---
-                // Garante que o ID é o mesmo que está digitado na caixa, 
-                // ignorando qualquer erro de mapeamento JSON.
+                // Garante que o ID é o mesmo que está digitado na caixa
                 ticketAtual.Id = int.Parse(textBox1.Text);
 
                 // Pegamos o que o técnico escreveu nas caixas editáveis
-                ticketAtual.Status = "Concluído";      // Status
+                ticketAtual.Status = "Concluído";        // Status Automático
                 ticketAtual.Categoria = textBox7.Text;   // Categoria
                 ticketAtual.Observacoes = textBox8.Text; // Observações
 
@@ -88,17 +100,7 @@ namespace TechSupportApp
                 if (sucesso)
                 {
                     MessageBox.Show("Chamado atualizado com sucesso!");
-
-                    // Limpa tudo para o próximo
-                    textBox1.Text = "";
-                    textBox2.Text = "";
-                    textBox3.Text = "";
-                    textBox4.Text = "";
-                    textBox5.Text = "";
-                    textBox6.Text = "";
-                    textBox7.Text = "";
-                    textBox8.Text = "";
-                    ticketAtual = null;
+                    this.Close(); // Fecha a tela para atualizar o Dashboard
                 }
                 else
                 {

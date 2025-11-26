@@ -32,6 +32,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnNovoChamado = new System.Windows.Forms.Button();
             this.btnEditarChamado = new System.Windows.Forms.Button();
+            this.btnExcluir = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -66,7 +67,7 @@
             this.btnNovoChamado.Location = new System.Drawing.Point(67, 244);
             this.btnNovoChamado.Name = "btnNovoChamado";
             this.btnNovoChamado.Size = new System.Drawing.Size(75, 23);
-            this.btnNovoChamado.TabIndex = 5;
+            this.btnNovoChamado.TabIndex = 7;
             this.btnNovoChamado.Text = "Novo";
             this.btnNovoChamado.UseVisualStyleBackColor = false;
             this.btnNovoChamado.Click += new System.EventHandler(this.btnNovoChamado_Click);
@@ -77,13 +78,27 @@
             this.btnEditarChamado.FlatAppearance.BorderSize = 0;
             this.btnEditarChamado.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEditarChamado.ForeColor = System.Drawing.Color.White;
-            this.btnEditarChamado.Location = new System.Drawing.Point(67, 329);
+            this.btnEditarChamado.Location = new System.Drawing.Point(67, 308);
             this.btnEditarChamado.Name = "btnEditarChamado";
             this.btnEditarChamado.Size = new System.Drawing.Size(75, 23);
             this.btnEditarChamado.TabIndex = 7;
             this.btnEditarChamado.Text = "Editar";
             this.btnEditarChamado.UseVisualStyleBackColor = false;
             this.btnEditarChamado.Click += new System.EventHandler(this.btnEditarChamado_Click);
+            // 
+            // btnExcluir
+            // 
+            this.btnExcluir.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.btnExcluir.FlatAppearance.BorderSize = 0;
+            this.btnExcluir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExcluir.ForeColor = System.Drawing.Color.White;
+            this.btnExcluir.Location = new System.Drawing.Point(67, 368);
+            this.btnExcluir.Name = "btnExcluir";
+            this.btnExcluir.Size = new System.Drawing.Size(75, 23);
+            this.btnExcluir.TabIndex = 8;
+            this.btnExcluir.Text = "Excluir";
+            this.btnExcluir.UseVisualStyleBackColor = false;
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
             // 
             // frmDashboard
             // 
@@ -92,6 +107,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = global::TechSupportApp.Properties.Resources.icka4uoo98m4ptfybikiu_6532622b_K7b5aS77sX;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnExcluir);
             this.Controls.Add(this.btnEditarChamado);
             this.Controls.Add(this.btnNovoChamado);
             this.Controls.Add(this.dataGridView1);
@@ -110,5 +126,6 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btnNovoChamado;
         private System.Windows.Forms.Button btnEditarChamado;
+        private System.Windows.Forms.Button btnExcluir;
     }
 }
