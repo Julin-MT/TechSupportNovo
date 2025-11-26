@@ -53,30 +53,52 @@ namespace TechSupportApp
             }
         }
 
-        
+
         private void ConfigurarColunas()
         {
-            
             if (dataGridView1.Rows.Count > 0)
             {
-                // Esconde colunas técnicas ou desnecessárias nessa visão rápida
-                // IMPORTANTE: Os nomes dentro de [""] devem ser iguais ao da classe Ticket.cs
-                if (dataGridView1.Columns["Prioridade"] != null) dataGridView1.Columns["Prioridade"].Visible = false;
+                // --- COLUNAS QUE QUEREMOS ESCONDER ---
                 if (dataGridView1.Columns["UsuarioId"] != null) dataGridView1.Columns["UsuarioId"].Visible = false;
                 if (dataGridView1.Columns["NomeUsuario"] != null) dataGridView1.Columns["NomeUsuario"].Visible = false;
                 if (dataGridView1.Columns["EmailUsuario"] != null) dataGridView1.Columns["EmailUsuario"].Visible = false;
-                if (dataGridView1.Columns["DataCriacao"] != null) dataGridView1.Columns["DataCriacao"].Visible = false;
-                if (dataGridView1.Columns["DataFechamento"] != null) dataGridView1.Columns["DataFechamento"].Visible = false;
                 if (dataGridView1.Columns["Categoria"] != null) dataGridView1.Columns["Categoria"].Visible = false;
                 if (dataGridView1.Columns["Observacoes"] != null) dataGridView1.Columns["Observacoes"].Visible = false;
 
-                // Renomeia os cabeçalhos para ficar bonito
-                if (dataGridView1.Columns["Id"] != null) dataGridView1.Columns["Id"].HeaderText = "Cód.";
-                if (dataGridView1.Columns["Titulo"] != null) dataGridView1.Columns["Titulo"].HeaderText = "Título do Chamado";
+                // --- COLUNAS VISÍVEIS (AGORA COM PRIORIDADE) ---
+
+                // 1. Prioridade (Mudei para TRUE)
+                if (dataGridView1.Columns["Prioridade"] != null)
+                {
+                    dataGridView1.Columns["Prioridade"].Visible = true; // <--- AGORA APARECE
+                    dataGridView1.Columns["Prioridade"].HeaderText = "Prioridade";
+                }
+
+                // 2. Datas (Já tínhamos arrumado)
+                if (dataGridView1.Columns["DataCriacao"] != null)
+                {
+                    dataGridView1.Columns["DataCriacao"].Visible = true;
+                    dataGridView1.Columns["DataCriacao"].HeaderText = "Aberto em";
+                    dataGridView1.Columns["DataCriacao"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                }
+
+                if (dataGridView1.Columns["DataFechamento"] != null)
+                {
+                    dataGridView1.Columns["DataFechamento"].Visible = true;
+                    dataGridView1.Columns["DataFechamento"].HeaderText = "Fechado em";
+                    dataGridView1.Columns["DataFechamento"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                }
+
+                // 3. Colunas Padrão
+                if (dataGridView1.Columns["Id"] != null)
+                {
+                    dataGridView1.Columns["Id"].HeaderText = "Cód.";
+                    dataGridView1.Columns["Id"].Width = 50;
+                }
+                if (dataGridView1.Columns["Titulo"] != null) dataGridView1.Columns["Titulo"].HeaderText = "Título";
                 if (dataGridView1.Columns["Descricao"] != null) dataGridView1.Columns["Descricao"].HeaderText = "Descrição";
                 if (dataGridView1.Columns["Status"] != null) dataGridView1.Columns["Status"].HeaderText = "Situação";
 
-                // Ajusta a largura para preencher a tela cinza
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
         }
@@ -88,16 +110,18 @@ namespace TechSupportApp
             // Botão vazio (pode apagar se não usar)
         }
 
-        private void btnNovoChamado_Click(object sender, EventArgs e)
+        // 1. Adicionamos 'async' aqui
+        private async void btnNovoChamado_Click(object sender, EventArgs e)
         {
             try
             {
                 frmNovoChamado telaNovoChamado = new frmNovoChamado();
+
+                // O código espera a janela fechar aqui
                 telaNovoChamado.ShowDialog();
 
-                // DICA EXTRA: Depois de fechar a tela de novo chamado, 
-                // é bom recarregar o grid para o novo chamado aparecer:
-                // CarregarGrid(); <--- (Pode descomentar isso depois se quiser testar)
+                // 2. Assim que fechar, atualizamos a lista (Descomentado e com await)
+                await CarregarGrid();
             }
             catch (Exception ex)
             {
@@ -105,12 +129,20 @@ namespace TechSupportApp
             }
         }
 
-        private void btnEditarChamado_Click(object sender, EventArgs e)
+        private async void btnEditarChamado_Click(object sender, EventArgs e)
         {
             try
             {
+                // Cria a tela de edição
                 frmEditarChamado telaEditar = new frmEditarChamado();
+
+                // Abre a tela e TRAVA o código aqui até você fechar a janelinha
                 telaEditar.ShowDialog();
+
+                // --- AQUI A MÁGICA ---
+                // Assim que a janela fecha, o código continua e recarrega a lista
+                // Isso faz o chamado "Concluído" sumir da lista de abertos na hora!
+                await CarregarGrid();
             }
             catch (Exception ex)
             {
